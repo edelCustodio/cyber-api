@@ -1,0 +1,21 @@
+{
+  "name": "api-cyber",
+  "version": "1.0.0",
+  "description": "Api para cyber skynet app",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "\u0016https://github.com/edelCustodio/cyber-api.git"
+  },
+  "author": "Edel Custodio",
+  "license": "MIT",
+  "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
+    "body-parser": "1.18.2",
+    "express": "4.16.2",
+    "tedious": "2.1.5"
+  }
+}
