@@ -9,6 +9,7 @@ let bcrypt = require('bcrypt-nodejs')
 //body parser
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.disable('etag');
 
 //CORS Middleware
 app.use(function (req, res, next) {
