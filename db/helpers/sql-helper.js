@@ -115,6 +115,10 @@ var SQLHelper = {
                         
                         arrObj.push(item);
                     });
+
+                    request.on('requestCompleted', function () { 
+                        console.log(request);
+                    });
                     
                     if (isProcedure) {
                         connection.callProcedure(request);

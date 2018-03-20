@@ -4,10 +4,12 @@ let bodyParser = require("body-parser")
 let desktop = require('./db/models/computadora')
 let usuario = require('./db/models/usuario')
 let producto = require('./db/models/producto')
+let ticket = require('./db/models/ticket')
 let bcrypt = require('bcrypt-nodejs')
+let SQLHelper = require('./db/helpers/sql-helper');
 
 //body parser
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.disable('etag');
 
@@ -23,6 +25,7 @@ app.use(function (req, res, next) {
 //Setting up server
 var server = app.listen(process.env.PORT || 7070, function () {
     var port = server.address().port;
+    // SQLHelper.createConnection();
     console.log("App now running on port", port);
 });
 
@@ -181,3 +184,49 @@ app.get('/api/getProductByName', function(req, res) {
         res.json(response);
     });
 });
+
+/**
+ * Ticket
+ * 
+ */
+
+ app.post('/api/createTicket', function (req, res) {
+    try {
+        var tk = req.body;
+
+        ticket.createTicket(tk).then(response => {
+            var idTicket = response[0].idTicket;
+            var detalleArray = tk.ticketsDetalle;
+            var countTicketDetalle = detalleArray.length;
+
+            // detalleArray.forEach(dt => {
+            //     ticket.createTicketDetail(dt).then(dtRes => {
+            //         res.json({ result: true, response: response });
+            //     }).catch(error => {
+        
+            //     });
+            // });
+            res.json({ result: true, idTicket: idTicket });
+        }).catch(error => {
+
+        });
+
+    } catch (e) {
+        res.json({ result: false, message: e });
+    }
+ });
+
+ app.post('/api/createTicketDetalle', function (req, res) {
+    try {
+        var dt = req.body;
+
+        ticket.createTicketDetail(dt).then(response => {
+            res.json({ result: true, response: response });
+        }).catch(error => {
+
+        });
+
+    } catch (e) {
+        res.json({ result: false, message: e });
+    }
+ });
