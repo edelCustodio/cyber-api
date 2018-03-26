@@ -1,6 +1,7 @@
 //SQL Objects
 const SqlConnection = require("tedious").Connection;
 const Request = require("tedious").Request;
+const async = require('async');
 
 //SQL Connection
 let connection = null;
@@ -79,7 +80,7 @@ var SQLHelper = {
     },
 
     //Execute any SQL statement, simple SELECT statement or stored procedure.
-    executeStatement: function(query, isProcedure) {
+    executeStatement: function(query, isProcedure, execTrans = false, dataArray = []) {
         var $this = this;
         var parameters = $this.sqlParameters();
         arrObj = []
@@ -92,14 +93,12 @@ var SQLHelper = {
                     console.log(errConnection);
                 } else {
                     var request = new Request(query, function(errRequest, rowCount, rows) {
-                        
                         if (errRequest) {
                             console.log(errRequest);
                         } else {
                             resolve(arrObj);
-                        }                   
-    
-                        connection.close();
+                            connection.close();
+                        }                        
                     });
     
                     //Adding sql parameters
@@ -125,8 +124,8 @@ var SQLHelper = {
                     } else {
                         connection.execSql(request);
                     }     
-                }                           
-            });
+                }
+            });            
         }); 
     },
   }
@@ -134,17 +133,16 @@ var SQLHelper = {
 
   function infoError(info) {
     var dd = info;
-    console.log('infoError=> ' + JSON.stringify(info));
+    console.log('infoError => ' + JSON.stringify(info));
   }
   
   function debug(message) {
     var dd = message;
-    console.log('debug=> ' + message);
+    console.log('debug => ' + message);
   }
   
   function end() {
     var dd = '';
   }
-
-
+  
 module.exports = SQLHelper;

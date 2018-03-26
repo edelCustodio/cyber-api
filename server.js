@@ -194,20 +194,10 @@ app.get('/api/getProductByName', function(req, res) {
     try {
         var tk = req.body;
 
-        ticket.createTicket(tk).then(response => {
-            var idTicket = response[0].idTicket;
-            var detalleArray = tk.ticketsDetalle;
-            var countTicketDetalle = detalleArray.length;
-
-            // detalleArray.forEach(dt => {
-            //     ticket.createTicketDetail(dt).then(dtRes => {
-            //         res.json({ result: true, response: response });
-            //     }).catch(error => {
-        
-            //     });
-            // });
-            res.json({ result: true, idTicket: idTicket });
-        }).catch(error => {
+        ticket.createTicket(tk).then(result => {
+            console.log(result);
+            res.json({ result: true, idTicket: result[0].idTicket });
+        }).catch(err => {
 
         });
 
@@ -220,8 +210,8 @@ app.get('/api/getProductByName', function(req, res) {
     try {
         var dt = req.body;
 
-        ticket.createTicketDetail(dt).then(response => {
-            res.json({ result: true, response: response });
+        ticket.createTicketDetail(dt.strInsert).then(response => {
+            res.json({ result: true });
         }).catch(error => {
 
         });

@@ -13,9 +13,11 @@
   "author": "Edel Custodio",
   "license": "MIT",
   "dependencies": {
+    "async": "2.6.0",
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "1.18.2",
     "express": "4.16.2",
+    "mssql": "4.1.0",
     "tedious": "2.1.5"
   }
 }
