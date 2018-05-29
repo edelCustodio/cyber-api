@@ -29,6 +29,10 @@ var server = app.listen(process.env.PORT || 7070, function () {
     console.log("App now running on port", port);
 });
 
+app.get('/api', function (req, res) {
+    res.send('Express is working on IISNode!');
+});
+
 /**
  * Usuario
  */
@@ -101,6 +105,14 @@ app.get('/api/getUserInfoByUserName', function(req, res) {
     });
 })
 
+app.post('/api/logout', function(req, res){
+    const idSesion = +req.body.idSesion
+
+    usuario.logout(idSesion).then(function(response) {
+        res.json({ result: true, data: response });
+    });
+})
+
 /**
  * Computadora
  */
@@ -150,17 +162,18 @@ app.post('/api/fileExists', function (req, res) {
 
 app.post('/api/desktopRecord', function(req, res) {
     var idComputadora = req.body.idComputadora;
+    var minutos = +req.body.minutos;
     var fecha = new Date(req.body.fecha);
 
-    desktop.updateDesktopRecord(idComputadora, fecha).then(result => {
+    desktop.updateDesktopRecord(idComputadora, fecha, minutos).then(result => {
         res.json(result);
-    })
+    });
 })
 
 app.post('/api/setDesktopOnline', function (req, res) {
     try {
         var idComputadora = req.body.idComputadora;
-        var enLinea = req.body.enLinea;
+        var enLinea = req.body.enLinea === 'true' ? 1 : 0;
         //Change desktop status
         desktop.updateDesktopOnline(idComputadora, enLinea).then(result => {
             res.json({ result: true, data: result[0] });
@@ -212,6 +225,21 @@ app.get('/api/getProductByName', function(req, res) {
 
         ticket.createTicketDetail(dt.strInsert).then(response => {
             res.json({ result: true });
+        }).catch(error => {
+
+        });
+
+    } catch (e) {
+        res.json({ result: false, message: e });
+    }
+ });
+
+ app.post('/api/getTicket', function (req, res) {
+    try {
+        const idTicket = +req.body.idTicket;
+
+        ticket.getTicketByID(idTicket).then(response => {
+            res.json({ result: true, data: response });
         }).catch(error => {
 
         });

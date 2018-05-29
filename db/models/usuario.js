@@ -27,6 +27,14 @@ var Usuario = {
         return SQLHelper.executeStatement(query, false);  
     },
 
+    logout: function(idSesion) {
+        SQLHelper.createConnection();
+        var query = 'servidor.CerrarSesion'
+        SQLHelper.clearSqlParameters();
+        SQLHelper.addSqlParameter(SQLHelper.sqlParameter('idSesion', idSesion, TYPES.Int));
+        return SQLHelper.executeStatement(query, true);  
+    },
+
     getUserByEmail: function(email){
 
         SQLHelper.createConnection();

@@ -59,12 +59,13 @@ var Computadora = {
         return SQLHelper.executeStatement(query, false);
     },
 
-    updateDesktopRecord: function (idComputadora, fecha) {
+    updateDesktopRecord: function (idComputadora, fecha, minutos) {
         SQLHelper.createConnection();
         var query = "cliente.GuardarRegistroComputadora"
         SQLHelper.clearSqlParameters();
         SQLHelper.addSqlParameter(SQLHelper.sqlParameter('idComputadora', idComputadora, TYPES.Int));
         SQLHelper.addSqlParameter(SQLHelper.sqlParameter('fecha', fecha, TYPES.DateTime));
+        SQLHelper.addSqlParameter(SQLHelper.sqlParameter('minutos', minutos, TYPES.Int));
         return SQLHelper.executeStatement(query, true);  
     },
 }

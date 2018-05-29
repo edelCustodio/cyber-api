@@ -21,6 +21,30 @@ class Ticket {
         SQLHelper.clearSqlParameters();
         return SQLHelper.executeStatement(insertDetail, false); 
     }
+
+    static async getTicketByID(idTicket) {
+        SQLHelper.createConnection();
+        var query = `SELECT td.cantidad, p.nombre, p.precio 
+                        FROM Entidad.Ticket t
+                        INNER JOIN Entidad.TicketDetalle td ON td.idTicket = t.idTicket
+                        INNER JOIN Catalogo.Producto p ON p.idProducto = td.idProducto
+                        WHERE t.idTicket = @idTicket`
+        SQLHelper.clearSqlParameters();
+        SQLHelper.addSqlParameter(SQLHelper.sqlParameter('idTicket', idTicket, TYPES.Int));
+        return SQLHelper.executeStatement(query, false); 
+    }
+
+    // static async getTicket(idTicket) {
+    //     SQLHelper.createConnection();
+    //     var query = `SELECT td.cantidad, p.nombre, p.precio 
+    //                     FROM Entidad.Ticket t
+    //                     INNER JOIN Entidad.TicketDetalle td ON td.idTicket = t.idTicket
+    //                     INNER JOIN Catalogo.Producto p ON p.idProducto = td.idProducto
+    //                     WHERE t.idTicket = @idTicket`
+    //     SQLHelper.clearSqlParameters();
+    //     SQLHelper.addSqlParameter(SQLHelper.sqlParameter('idTicket', idTicket, TYPES.Int));
+    //     return SQLHelper.executeStatement(insertDetail, false); 
+    // }
 }
 
 

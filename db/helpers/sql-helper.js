@@ -38,13 +38,13 @@ var SQLHelper = {
     },
 
     //Clear the SQL Parameters array
-    clearSqlParameters: function(){
+    clearSqlParameters: function() {
         parameters = [];
     },
 
     //Get the IP Server
     getIPServer: function() {
-        return "localhost";
+        return "127.0.0.1";
     },
   
     getConfig() {
