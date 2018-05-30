@@ -24,7 +24,9 @@ class Ticket {
 
     static async getTicketByID(idTicket) {
         SQLHelper.createConnection();
-        var query = `SELECT td.cantidad, p.nombre, p.precio 
+        var query = `SELECT td.cantidad
+                           ,p.nombre
+                           ,CASE WHEN td.idProducto = 1360 THEN reg.totalPagar ELSE p.precio END precio  
                         FROM Entidad.Ticket t
                         INNER JOIN Entidad.TicketDetalle td ON td.idTicket = t.idTicket
                         INNER JOIN Catalogo.Producto p ON p.idProducto = td.idProducto
