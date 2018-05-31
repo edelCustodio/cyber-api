@@ -24,12 +24,11 @@ class Ticket {
 
     static async getTicketByID(idTicket) {
         SQLHelper.createConnection();
-        var query = `SELECT td.cantidad
-                           ,p.nombre
-                           ,CASE WHEN td.idProducto = 1360 THEN reg.totalPagar ELSE p.precio END precio  
+        var query = `SELECT td.cantidad, p.nombre, CASE WHEN td.idProducto = 1360 THEN reg.totalPagar ELSE p.precio END precio 
                         FROM Entidad.Ticket t
                         INNER JOIN Entidad.TicketDetalle td ON td.idTicket = t.idTicket
                         INNER JOIN Catalogo.Producto p ON p.idProducto = td.idProducto
+                        LEFT JOIN Entidad.RegistroComputadora reg ON reg.idRegistro = t.idRegistro
                         WHERE t.idTicket = @idTicket`
         SQLHelper.clearSqlParameters();
         SQLHelper.addSqlParameter(SQLHelper.sqlParameter('idTicket', idTicket, TYPES.Int));
