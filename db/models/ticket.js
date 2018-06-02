@@ -9,6 +9,8 @@ class Ticket {
         SQLHelper.addSqlParameter(SQLHelper.sqlParameter('total', ticket.total, TYPES.Money));
         SQLHelper.addSqlParameter(SQLHelper.sqlParameter('pago', ticket.pago, TYPES.Money));
         SQLHelper.addSqlParameter(SQLHelper.sqlParameter('cambio', ticket.cambio, TYPES.Money));
+        SQLHelper.addSqlParameter(SQLHelper.sqlParameter('idUsuario', ticket.idUsuario, TYPES.Money));
+
         if (ticket.idRegistro > 0) {
             SQLHelper.addSqlParameter(SQLHelper.sqlParameter('idRegistro', ticket.idRegistro, TYPES.Int));
         }
@@ -22,9 +24,53 @@ class Ticket {
         return SQLHelper.executeStatement(insertDetail, false); 
     }
 
+    static async updateTicketDetail(idTicketDetalle, cantidad) {
+        SQLHelper.createConnection();
+        var query = "UPDATE [Entidad].[TicketDetalle] SET cantidad = @cantidad WHERE idTicketDetalle = @idTicketDetalle";;
+        SQLHelper.clearSqlParameters();
+        SQLHelper.addSqlParameter(SQLHelper.sqlParameter('cantidad', cantidad, TYPES.Int));
+        SQLHelper.addSqlParameter(SQLHelper.sqlParameter('idTicketDetalle', idTicketDetalle, TYPES.Int));
+        return SQLHelper.executeStatement(query, false); 
+    }
+
+    static async deleteTicketDetail(idTicketDetalle) {
+        SQLHelper.createConnection();
+        var query = "servidor.EliminarTicketDetalle";
+        SQLHelper.clearSqlParameters();
+        SQLHelper.addSqlParameter(SQLHelper.sqlParameter('idTicketDetalle', idTicketDetalle, TYPES.Int));
+        return SQLHelper.executeStatement(query, true); 
+    }
+
+    static async payTicket(ticket) {
+        SQLHelper.createConnection();
+        var query = `UPDATE [Entidad].[Ticket] 
+                        SET status = 1,
+                            pago = @pago,
+                            cambio = @cambio,
+                            total = @total
+                    WHERE idTicket = @idTicket`;
+        SQLHelper.clearSqlParameters();
+        SQLHelper.addSqlParameter(SQLHelper.sqlParameter('pago', ticket.pago, TYPES.Money));
+        SQLHelper.addSqlParameter(SQLHelper.sqlParameter('cambio', ticket.cambio, TYPES.Money));
+        SQLHelper.addSqlParameter(SQLHelper.sqlParameter('total', ticket.total, TYPES.Money));
+        SQLHelper.addSqlParameter(SQLHelper.sqlParameter('idTicket', ticket.idTicket, TYPES.Int));
+        return SQLHelper.executeStatement(query, false); 
+    }
+
+    static async deleteTicket(idTicket) {
+        SQLHelper.createConnection();
+        var query = "UPDATE [Entidad].[Ticket] SET eliminado = 1 WHERE idTicket = " + idTicket;
+        SQLHelper.clearSqlParameters();
+        return SQLHelper.executeStatement(query, false); 
+    }
+
     static async getTicketByID(idTicket) {
         SQLHelper.createConnection();
-        var query = `SELECT td.cantidad, p.nombre, CASE WHEN td.idProducto = 1360 THEN reg.totalPagar ELSE p.precio END precio 
+        var query = `SELECT td.cantidad
+                            ,p.nombre
+                            ,CASE WHEN td.idProducto = 1360 THEN reg.totalPagar ELSE td.cantidad * p.precio END precio
+                            ,t.pago
+                            ,t.cambio
                         FROM Entidad.Ticket t
                         INNER JOIN Entidad.TicketDetalle td ON td.idTicket = t.idTicket
                         INNER JOIN Catalogo.Producto p ON p.idProducto = td.idProducto
@@ -35,17 +81,28 @@ class Ticket {
         return SQLHelper.executeStatement(query, false); 
     }
 
-    // static async getTicket(idTicket) {
-    //     SQLHelper.createConnection();
-    //     var query = `SELECT td.cantidad, p.nombre, p.precio 
-    //                     FROM Entidad.Ticket t
-    //                     INNER JOIN Entidad.TicketDetalle td ON td.idTicket = t.idTicket
-    //                     INNER JOIN Catalogo.Producto p ON p.idProducto = td.idProducto
-    //                     WHERE t.idTicket = @idTicket`
-    //     SQLHelper.clearSqlParameters();
-    //     SQLHelper.addSqlParameter(SQLHelper.sqlParameter('idTicket', idTicket, TYPES.Int));
-    //     return SQLHelper.executeStatement(insertDetail, false); 
-    // }
+    static async getTicketsPending() {
+        SQLHelper.createConnection();
+        var query = 'servidor.ObtenerTicketsPendientes'
+        SQLHelper.clearSqlParameters();
+        return SQLHelper.executeStatement(query, true); 
+    }
+
+    static async getTicketsDetallePending(ids) {
+        SQLHelper.createConnection();
+        var query = 'SELECT * FROM Entidad.TicketDetalle WHERE idTicket IN (' + ids + ')';
+        SQLHelper.clearSqlParameters();
+        // SQLHelper.addSqlParameter(SQLHelper.sqlParameter('ids', ids, TYPES.Int));
+        return SQLHelper.executeStatement(query, false); 
+    }
+
+    static async getRecordsNoPay() {
+        SQLHelper.createConnection();
+        var query = 'SELECT * FROM Entidad.RegistroComputadora WHERE pagado = 0';
+        SQLHelper.clearSqlParameters();
+        // SQLHelper.addSqlParameter(SQLHelper.sqlParameter('ids', ids, TYPES.Int));
+        return SQLHelper.executeStatement(query, false); 
+    }
 }
 
 

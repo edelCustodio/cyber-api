@@ -7,6 +7,7 @@ let producto = require('./db/models/producto')
 let ticket = require('./db/models/ticket')
 let bcrypt = require('bcrypt-nodejs')
 let SQLHelper = require('./db/helpers/sql-helper');
+const Enumerable = require('linq');
 
 //body parser
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -198,6 +199,18 @@ app.get('/api/getProductByName', function(req, res) {
     });
 });
 
+app.get('/api/getLatestDesktopRecord', function (req, res) {
+    try {
+        var idComputadora = +req.query.idComputadora;
+        //Change desktop status
+        desktop.getLatestDesktopRecord(idComputadora).then(response => {
+            res.json({ result: true, data: response[0] });
+        });
+    } catch (e) {
+        res.json({ result: false, message: e });
+    }
+});
+
 /**
  * Ticket
  * 
@@ -209,7 +222,7 @@ app.get('/api/getProductByName', function(req, res) {
 
         ticket.createTicket(tk).then(result => {
             console.log(result);
-            res.json({ result: true, idTicket: result[0].idTicket });
+            res.json({ result: true, ticket: result[0] });
         }).catch(err => {
 
         });
@@ -234,11 +247,121 @@ app.get('/api/getProductByName', function(req, res) {
     }
  });
 
+ app.post('/api/updateTicketDetalle', function (req, res) {
+    try {
+        var idTicketDetalle = +req.body.idTicketDetalle;
+        var cantidad = +req.body.cantidad;
+
+        ticket.updateTicketDetail(idTicketDetalle, cantidad).then(response => {
+            res.json({ result: true });
+        }).catch(error => {
+
+        });
+
+    } catch (e) {
+        res.json({ result: false, message: e });
+    }
+ });
+
+ app.post('/api/deleteTicketDetalle', function (req, res) {
+    try {
+        var idTicketDetalle = req.body.idTicketDetalle;
+
+        ticket.deleteTicketDetail(idTicketDetalle).then(response => {
+            res.json({ result: true });
+        }).catch(error => {
+
+        });
+
+    } catch (e) {
+        res.json({ result: false, message: e });
+    }
+ });
+
+ app.post('/api/deleteTicket', function (req, res) {
+    try {
+        var idTicket = +req.body.idTicket;
+
+        ticket.deleteTicket(idTicket).then(response => {
+            res.json({ result: true });
+        }).catch(error => {
+
+        });
+
+    } catch (e) {
+        res.json({ result: false, message: e });
+    }
+ });
+
+ app.post('/api/payTicket', function (req, res) {
+    try {
+        var t = req.body;
+
+        ticket.payTicket(t).then(response => {
+            res.json({ result: true });
+        }).catch(error => {
+
+        });
+
+    } catch (e) {
+        res.json({ result: false, message: e });
+    }
+ });
+
  app.post('/api/getTicket', function (req, res) {
     try {
         const idTicket = +req.body.idTicket;
 
         ticket.getTicketByID(idTicket).then(response => {
+            res.json({ result: true, data: response });
+        }).catch(error => {
+
+        });
+
+    } catch (e) {
+        res.json({ result: false, message: e });
+    }
+ });
+
+ app.get('/api/getTicketsPending', function (req, res) {
+    try {
+        
+        ticket.getTicketsPending().then(response => {
+            let t = [];
+            let ti = [];
+            let det = [];
+            t = response;
+            if (t.length > 0) {
+                t.forEach(elemento => {
+                    // tabla ticket
+                    if (elemento['idTicketDetalle'] === undefined) {
+                        ti.push(elemento);
+                    } else { // tabla ticket detalle
+                        det.push(elemento);
+                    }
+                });
+
+                // obtener el detalle de cada ticket
+                ti.forEach(ele => {
+                    ele.ticketsDetalle = Enumerable.from(det).where(w => w.idTicket === ele.idTicket).toArray();
+                });
+
+               res.json({ result: true, data: ti });
+            }
+            
+        }).catch(error => {
+            
+        });
+
+    } catch (e) {
+        res.json({ result: false, message: e });
+    }
+ });
+
+ app.get('/api/getRecordsNoPay', function (req, res) {
+    try {
+
+        ticket.getRecordsNoPay().then(response => {
             res.json({ result: true, data: response });
         }).catch(error => {
 
