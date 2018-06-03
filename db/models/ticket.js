@@ -24,13 +24,14 @@ class Ticket {
         return SQLHelper.executeStatement(insertDetail, false); 
     }
 
-    static async updateTicketDetail(idTicketDetalle, cantidad) {
+    static async updateTicketDetail(idTicketDetalle, cantidad, precio) {
         SQLHelper.createConnection();
-        var query = "UPDATE [Entidad].[TicketDetalle] SET cantidad = @cantidad WHERE idTicketDetalle = @idTicketDetalle";;
+        var query = "UPDATE [Entidad].[TicketDetalle] SET cantidad = @cantidad, precio = @precio WHERE idTicketDetalle = @idTicketDetalle";;
         SQLHelper.clearSqlParameters();
         SQLHelper.addSqlParameter(SQLHelper.sqlParameter('cantidad', cantidad, TYPES.Int));
         SQLHelper.addSqlParameter(SQLHelper.sqlParameter('idTicketDetalle', idTicketDetalle, TYPES.Int));
-        return SQLHelper.executeStatement(query, false); 
+        SQLHelper.addSqlParameter(SQLHelper.sqlParameter('precio', precio, TYPES.Money));
+        return SQLHelper.executeStatement(query, false);
     }
 
     static async deleteTicketDetail(idTicketDetalle) {
@@ -67,15 +68,18 @@ class Ticket {
     static async getTicketByID(idTicket) {
         SQLHelper.createConnection();
         var query = `SELECT td.cantidad
-                            ,p.nombre
-                            ,CASE WHEN td.idProducto = 1360 THEN reg.totalPagar ELSE td.cantidad * p.precio END precio
-                            ,t.pago
-                            ,t.cambio
-                        FROM Entidad.Ticket t
-                        INNER JOIN Entidad.TicketDetalle td ON td.idTicket = t.idTicket
-                        INNER JOIN Catalogo.Producto p ON p.idProducto = td.idProducto
-                        LEFT JOIN Entidad.RegistroComputadora reg ON reg.idRegistro = t.idRegistro
-                        WHERE t.idTicket = @idTicket`
+                        ,p.nombre
+                        ,CASE WHEN td.idProducto = 1360 
+                            THEN reg.totalPagar 
+                            ELSE CASE WHEN p.precio = 0 THEN td.precio ELSE td.cantidad * p.precio END
+                            END precio
+                        ,t.pago
+                        ,t.cambio
+                    FROM Entidad.Ticket t
+                    INNER JOIN Entidad.TicketDetalle td ON td.idTicket = t.idTicket
+                    INNER JOIN Catalogo.Producto p ON p.idProducto = td.idProducto
+                    LEFT JOIN Entidad.RegistroComputadora reg ON reg.idRegistro = t.idRegistro
+                    WHERE t.idTicket = @idTicket`
         SQLHelper.clearSqlParameters();
         SQLHelper.addSqlParameter(SQLHelper.sqlParameter('idTicket', idTicket, TYPES.Int));
         return SQLHelper.executeStatement(query, false); 

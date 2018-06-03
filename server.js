@@ -251,8 +251,9 @@ app.get('/api/getLatestDesktopRecord', function (req, res) {
     try {
         var idTicketDetalle = +req.body.idTicketDetalle;
         var cantidad = +req.body.cantidad;
+        var precio = parseFloat(req.body.precio);
 
-        ticket.updateTicketDetail(idTicketDetalle, cantidad).then(response => {
+        ticket.updateTicketDetail(idTicketDetalle, cantidad, precio).then(response => {
             res.json({ result: true });
         }).catch(error => {
 
