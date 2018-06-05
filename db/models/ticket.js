@@ -9,7 +9,7 @@ class Ticket {
         SQLHelper.addSqlParameter(SQLHelper.sqlParameter('total', ticket.total, TYPES.Money));
         SQLHelper.addSqlParameter(SQLHelper.sqlParameter('pago', ticket.pago, TYPES.Money));
         SQLHelper.addSqlParameter(SQLHelper.sqlParameter('cambio', ticket.cambio, TYPES.Money));
-        SQLHelper.addSqlParameter(SQLHelper.sqlParameter('idUsuario', ticket.idUsuario, TYPES.Money));
+        SQLHelper.addSqlParameter(SQLHelper.sqlParameter('idUsuario', ticket.idUsuario, TYPES.Int));
 
         if (ticket.idRegistro > 0) {
             SQLHelper.addSqlParameter(SQLHelper.sqlParameter('idRegistro', ticket.idRegistro, TYPES.Int));

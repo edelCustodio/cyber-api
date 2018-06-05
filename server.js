@@ -165,15 +165,16 @@ app.post('/api/desktopRecord', function(req, res) {
     var idComputadora = req.body.idComputadora;
     var minutos = +req.body.minutos;
     var fecha = new Date(req.body.fecha);
+    var idUsuario = +req.body.idUsuario;
 
-    desktop.updateDesktopRecord(idComputadora, fecha, minutos).then(result => {
+    desktop.updateDesktopRecord(idComputadora, fecha, minutos, idUsuario).then(result => {
         res.json(result);
     });
 })
 
 app.post('/api/setDesktopOnline', function (req, res) {
     try {
-        var idComputadora = req.body.idComputadora;
+        var idComputadora = +req.body.idComputadora;
         var enLinea = req.body.enLinea === 'true' ? 1 : 0;
         //Change desktop status
         desktop.updateDesktopOnline(idComputadora, enLinea).then(result => {

@@ -19,8 +19,7 @@ class Computadora {
                             ,pagado
                        FROM [Entidad].[RegistroComputadora]
                       WHERE CAST(fechaInicio AS DATE) = CAST(GETDATE() AS DATE)
-                        AND fechaFin IS NULL
-                        AND pagado = 0`;
+                        AND fechaFin IS NULL`;
         SQLHelper.clearSqlParameters();
         return SQLHelper.executeStatement(query, false);  
     }
@@ -59,13 +58,14 @@ class Computadora {
         return SQLHelper.executeStatement(query, false);
     }
 
-    static async updateDesktopRecord(idComputadora, fecha, minutos) {
+    static async updateDesktopRecord(idComputadora, fecha, minutos, idUsuario) {
         SQLHelper.createConnection();
         var query = "cliente.GuardarRegistroComputadora"
         SQLHelper.clearSqlParameters();
         SQLHelper.addSqlParameter(SQLHelper.sqlParameter('idComputadora', idComputadora, TYPES.Int));
         SQLHelper.addSqlParameter(SQLHelper.sqlParameter('fecha', fecha, TYPES.DateTime));
         SQLHelper.addSqlParameter(SQLHelper.sqlParameter('minutos', minutos, TYPES.Int));
+        SQLHelper.addSqlParameter(SQLHelper.sqlParameter('idUsuario', idUsuario, TYPES.Int));
         return SQLHelper.executeStatement(query, true);  
     }
 
